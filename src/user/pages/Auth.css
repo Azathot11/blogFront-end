@@ -1,0 +1,41 @@
+.authentication__header {
+    color: white;
+    text-align: center;
+  }
+  
+  .authentication {
+    width: 90%;
+    max-width: 25rem;
+    margin: 7rem auto;
+    text-align: center;
+  }
+  
+  .authentication form {
+    margin-bottom: 1rem;
+  }
+
+  .switchB{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color:  rgb(104, 104, 230);
+    font-size: 15px;
+  }
+
+  .equalPassword{
+    color:red
+  }
+  .inputob{
+    position: relative;
+   
+  }
+  .eyeIcon{
+    position: absolute;
+    right: 5px;
+   top: 38px;
+   cursor: pointer;
+
+  }
+  .signpmessage{
+    color: rgb(30, 210, 30);
+  }
