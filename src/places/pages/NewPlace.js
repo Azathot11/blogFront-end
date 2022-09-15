@@ -7,7 +7,9 @@ import { useStateContext } from "../../shared/context/auth-context";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 import { useNavigate } from "react-router-dom";
+
 import "./NewPlace.css";
 
 
@@ -29,6 +31,10 @@ const NewPlace = () => {
       value: '',
       isValid: false
     },
+    image:{
+      value:null,
+      isValid: false
+    }
   },false);
 
   const requestData = (data)=>{
@@ -44,16 +50,21 @@ const NewPlace = () => {
   const placeSubmitHandler = (event) => {
     event.preventDefault();
     console.log(formState.inputs);
-    const data={
-      title:formState.inputs.title.value,
-      description:formState.inputs.description.value,
-      address:formState.inputs.address.value,
-    }
+    // const data={
+    //   title:formState.inputs.title.value,
+    //   description:formState.inputs.description.value,
+    //   address:formState.inputs.address.value,
+    // }
+    const formData = new FormData();
+    formData.append('image',formState.inputs.image.value);
+    formData.append('title',formState.inputs.title.value);
+    formData.append('description',formState.inputs.description.value);
+    formData.append('address',formState.inputs.address.value);
     const  headers = {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
     }
-    sendRequest('http://localhost:8081/api/createPlace',requestData,'POST',data,headers)
+    sendRequest('http://localhost:8081/api/createPlace',requestData,'POST',formData,headers)
     // setIsLoading(true);
     // axios.post('http://localhost:8081/api/createPlace',
     // {
@@ -82,6 +93,7 @@ const NewPlace = () => {
     <ErrorModal error={error} onClear={errorHandler}/>
      {loading && <LoadingSpinner asOverlay/>}
     <form className="place-form" onSubmit={placeSubmitHandler}>
+      <ImageUpload center id='image' onInput={inputHandler} errorText ='Please add an image'/>
       <Input
         id="title"
         element="input"

@@ -7,6 +7,7 @@ import { VALIDATOR_EMAIL, VALIDATOR_MINLENGTH,VALIDATOR_REQUIRE} from '../../sha
 import { useForm } from '../../shared/hooks/form-hook';
 import Card from '../../shared/components/UIElements/Card';
 import { useStateContext } from '../../shared/context/auth-context';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -48,7 +49,8 @@ const Auth = () => {
         setFormData(
           {
             ...formState.inputs,
-            name: undefined
+            name: undefined,
+            image:undefined
           },
           formState.inputs.email.isValid && formState.inputs.password.isValid
         );
@@ -59,6 +61,10 @@ const Auth = () => {
             name: {
               value: '',
               isValid: false
+            },
+            image:{
+              value:null,
+              isValid: false
             }
           },
           false
@@ -66,11 +72,13 @@ const Auth = () => {
       }
       setIsLoginMode(prevMode => !prevMode);
     };
+    let data = new FormData();
+    
    
-
+   
     const authSubmitHandler = event => {
       event.preventDefault();
-      console.log(formState.inputs);
+      // console.log(formState.inputs.image.value);
       const url = isLoginMode ?'http://localhost:8081/auth/signIn':'http://localhost:8081/user/signUp'
       if(!isLoginMode){
         if(formState.inputs.password.value !== formState.inputs.confirmPassword.value ){
@@ -78,17 +86,33 @@ const Auth = () => {
          return
         }
       }
+       
+      let formData = new FormData();
+
+
+      if(!isLoginMode){
+        formData.append("image", formState.inputs.image.value);
+        formData.append("name", formState.inputs.name.value);
+        formData.append("email", formState.inputs.email.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append(
+          "confirmPassword",
+          formState.inputs.confirmPassword.value
+        );
+      }
+      // console.log(
+      //   formData.get('image'),
+      //   formData.get('name'),
+      //   formData.get('email'),
+      //   formData.get('password'),
+      //   formData.get('confirmPassword'),
+      // )
        const postData =isLoginMode ? {
         email:formState.inputs.email.value,
         password:formState.inputs.password.value
-      }:{
-        name:formState.inputs.name.value,
-        email:formState.inputs.email.value,
-        password:formState.inputs.password.value,
-        confirmPassword:formState.inputs.confirmPassword.value
-      }
+      }:formData
       setIsLoading(true);
-      // console.log(postData)
+      console.log(postData)
       
       axios.post(url,postData)
       .then((data)=>{
@@ -139,6 +163,7 @@ const Auth = () => {
         <h2>Login Required</h2>
         <hr />
         <form onSubmit={authSubmitHandler}>
+        {!isLoginMode && <ImageUpload center id='image' onInput={inputHandler}  errorText ='Please add an image'/>} 
           {!isLoginMode && (
             <Input
               element="input"
@@ -150,6 +175,7 @@ const Auth = () => {
               onInput={inputHandler}
             />
           )}
+         
           <Input
             element="input"
             id="email"
